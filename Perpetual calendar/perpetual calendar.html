@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" type="text/css" href="perpetual calendar.css"/>
+        <title>萬年曆</title>
+    </head>
+    
+    <body>
+        <script type="text/javascript">
+            var year = -1;
+            var month = -1;
+            var day = -1;
+            var answer = -1;
+            var leapYear = 0;
+
+            function inquire() {
+                //將各變數設為-1來debug
+                year = -1;
+                month = -1;
+                day = -1; 
+
+                //取得輸入
+                year = Number(document.getElementById("inputYear").value);
+                month = Number(document.getElementById("inputMonth").value);
+                day = Number(document.getElementById("inputDay").value);
+
+                //驗證使用者輸入的是否合理
+                if ((year <= 1582) || !Number.isInteger(year)) {
+                    document.getElementById("result").innerHTML = '輸入年份錯誤'
+                }
+                else if (!Number.isInteger(month) || (month < 1) || (month > 12)) {
+                    document.getElementById("result").innerHTML = '輸入月份錯誤'
+                }
+            else {
+                if (!Number.isInteger(day) || (day > dayOfMonth[month]) || (day < 1)) {
+                    document.getElementById("result").innerHTML = '輸入日期錯誤'
+                }
+                else if (!isLeapYear(year) && month == 2 && day > 28){
+                    document.getElementById("result").innerHTML = '輸入日期錯誤'
+                }
+                else {
+                    // 已完成驗證
+                    // 找出當年是否為閏年
+                    if (isLeapYear(year) && month >= 3){
+                        leapYear = 1;
+                    }
+                    else {
+                        leapYear = 0;
+                    }
+                    // 要減一年才會是經過的年份
+                    year = year - 1;
+                    // 開始運算
+                    answer = (year + Math.floor(year / 4) + Math.floor(year / 400) - Math.floor(year / 100) + passedDay[month] + day + leapYear) % 7;
+                    document.getElementById("result").innerHTML = '您查詢的日期為星期' + numberToChinese[answer]                    
+                }
+            }
+        }
+        
+        //閏年判斷
+        function isLeapYear(y) {
+            if (y % 400 == 0){
+                return true;
+            }
+            else if (y % 100 == 0){
+                return false;
+            }
+            else if (y % 4 == 0){
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+        //把結果轉為中文
+        const numberToChinese = {
+            '0' : '日',
+            '1' : '一',
+            '2' : '二',
+            '3' : '三',
+            '4' : '四',
+            '5' : '五',
+            '6' : '六',
+        }
+
+        // 運算各個月份經過的天數
+        const passedDay = {
+            '1' : 0,
+            '2' : 31,
+            '3' : 59,
+            '4' : 90,
+            '5' : 120,
+            '6' : 151,
+            '7' : 181,
+            '8' : 212,
+            '9' : 243,
+            '10' : 273,
+            '11' : 304,
+            '12' : 334,
+        }
+
+        // 每個月份的天數
+        const dayOfMonth = {
+            '1' : 31,
+            '2' : 29,
+            '3' : 31,
+            '4' : 30,
+            '5' : 31,
+            '6' : 30,
+            '7' : 31,
+            '8' : 31,
+            '9' : 30,
+            '10' : 31,
+            '11' : 30,
+            '12' : 31,
+        }
+
+    </script>
+        
+        <div class="styleTopic" style="display: flex;justify-content: center;align-items:flex-end;height: 100px;">萬年曆</div>
+        <p class="styleText">說明：只要輸入年、月、日，即可求得當天是星期幾喔！</p>
+        <div style="display: flex;justify-content: center;align-items: center;">
+            <div style="display: flex;justify-content: center;align-items: center;">
+                <input type="text" id="inputYear" name="year" placeholder="年" style="width: 80%;"></input>
+            </div>
+            <div style="display: flex;justify-content: center;align-items: center;">
+                <input type="text" id="inputMonth" name="month" placeholder="月" style="width: 80%;"></input>
+            </div>
+            <div style="display: flex;justify-content: center;align-items: center;">
+                <input type="text" id="inputDay" name="day" placeholder="日" style="width: 80%;"></input>
+            </div>
+        </div>
+        <div style="display: flex;justify-content: center;align-items: center;height: 80px;">
+            <input class="styledButton" type="button" value="查詢" onclick="inquire()"></input>
+        </div>
+        <p class="styleAnswer" id="result"></p>
+    </body>
+</html>
